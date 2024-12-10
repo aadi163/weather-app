@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useRef } from "react";
+import "./Weather.css";
+import weatherLogo from "../assets/weather.png";
+import DateObject from "react-date-object";
 import axios from "axios";
 
 const Weather = () => {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [weatherData, setWeatherData] = useState(null);
+  // const [sevenDayData, setsevenDayData] = useState([]);
+  const bgColor = useRef();
+  let date = new DateObject();
+  let currentDate = date.format("dddd DD MMMM");
 
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `https://api.weatherbit.io/v2.0/current?lat=35.7796&lon=-78.6382&key=80d66ddb69604aab9719f91319545632&include=minutely&city=${city}&country=${country}`
+        `https://api.weatherbit.io/v2.0/forecast/daily?key=80d66ddb69604aab9719f91319545632&city=${city}&country=${country}`
       );
       setWeatherData(response.data);
       console.log(response.data);
@@ -17,10 +24,6 @@ const Weather = () => {
       console.error(error);
     }
   };
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
 
   const cityInputChange = (e) => {
     setCity(e.target.value);
@@ -35,37 +38,57 @@ const Weather = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter city name"
-          value={city}
-          onChange={cityInputChange}
-        />
-        <input
-          type="text"
-          placeholder="Enter country"
-          value={country}
-          onChange={countryInputChange}
-        />
-        <button type="submit">Get Weather</button>
-      </form>
+    <div className="container" ref={bgColor}>
+      <div className="form">
+        <img src={weatherLogo} alt="" />
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="please enter your location "
+            value={city}
+            onChange={cityInputChange}
+            className="input-field"
+          />
+          <input
+            type="text"
+            placeholder="Enter country"
+            value={country}
+            onChange={countryInputChange}
+            className="input-field"
+          />
+          <button type="submit" className="button">
+            search
+          </button>
+        </form>
+      </div>
       {weatherData ? (
         <div>
-          {weatherData.data.map((item, index) => (
-            <div key={index}>
-              <h2>
-                {item.city_name}, {item.country_code}
-              </h2>
-              <p>Temperature: {item.app_temp}°C</p>
-              <p>AQI: {item.aqi}</p>
-              <p>Cloudiness: {item.clouds}%</p>
-            </div>
-          ))}
+          <div className="current-weather">
+            {currentDate}
+            <h1>
+              {weatherData.data[0].temp}
+              <sup>°C</sup>
+            </h1>
+            {weatherData.city_name},{weatherData.country_code}
+          </div>
+          <div className="weather-info">
+            {weatherData.data.slice(0, 7).map((data, index) => (
+              <div key={index}>
+                <div>
+                  {new Date(data.valid_date).toLocaleDateString("en-US", {
+                    weekday: "long",
+                  })}
+                </div>
+                <span>
+                  {data.temp}
+                  <sup>°C</sup>
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
-        <p>Loading weather data...</p>
+        <p></p>
       )}
     </div>
   );
