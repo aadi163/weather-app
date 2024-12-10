@@ -1,10 +1,12 @@
 body {
   background: linear-gradient(
-    145deg,
-    #d5f4ef 10.2%,
-    #fbfbfb 60.2%,
-    #fa956d 400%
+    140deg,
+    #87c7bd 10.2%,
+    rgb(224, 219, 219) 50%,
+    #f37746 250%
   );
+  animation: bg-color infinite 10s;
+  animation-direction: alternate;
 }
 .App {
   text-align: center;
@@ -42,5 +44,39 @@ body {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+@keyframes bg-color {
+  0% {
+    background: linear-gradient(
+      140deg,
+      #87c7bd 10.2%,
+      rgb(224, 219, 219) 50%,
+      #f37746 250%
+    );
+  }
+  30% {
+    background: linear-gradient(
+      160deg,
+      #6dc5b8 10.2%,
+      rgb(224, 219, 219) 50%,
+      #b9542c 250%
+    );
+  }
+  60% {
+    background: linear-gradient(
+      180deg,
+      #75d6c7 10.2%,
+      rgb(224, 219, 219) 50%,
+      #b26343 250%
+    );
+  }
+  100% {
+    background: linear-gradient(
+      200deg,
+      #87c7bd 10.2%,
+      rgb(224, 219, 219) 50%,
+      #f37746 250%
+    );
   }
 }

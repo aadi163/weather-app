@@ -1,15 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import "./Weather.css";
 import weatherLogo from "../assets/weather.png";
+import searchIcon from "../assets/search-icon.png";
 import DateObject from "react-date-object";
+import Countries from "../assets/Countries.json";
 import axios from "axios";
 
 const Weather = () => {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [weatherData, setWeatherData] = useState(null);
-  // const [sevenDayData, setsevenDayData] = useState([]);
-  const bgColor = useRef();
   let date = new DateObject();
   let currentDate = date.format("dddd DD MMMM");
 
@@ -32,16 +32,24 @@ const Weather = () => {
     setCountry(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const searchData = (e) => {
     e.preventDefault();
     fetchData();
   };
 
   return (
-    <div className="container" ref={bgColor}>
+    <div className="container">
       <div className="form">
         <img src={weatherLogo} alt="" />
-        <form onSubmit={handleSubmit}>
+        <form>
+          <select onChange={countryInputChange} defaultValue={"IN"}>
+            {Countries.map((data) => (
+              <option value={data.isoCode}>
+                <img src={data.flag} alt="image" />
+                {data.isoCode}
+              </option>
+            ))}
+          </select>
           <input
             type="text"
             placeholder="please enter your location "
@@ -49,17 +57,10 @@ const Weather = () => {
             onChange={cityInputChange}
             className="input-field"
           />
-          <input
-            type="text"
-            placeholder="Enter country"
-            value={country}
-            onChange={countryInputChange}
-            className="input-field"
-          />
-          <button type="submit" className="button">
-            search
-          </button>
         </form>
+        <span onClick={searchData} className="button">
+          <img src={searchIcon} alt="" />
+        </span>
       </div>
       {weatherData ? (
         <div>
@@ -88,7 +89,7 @@ const Weather = () => {
           </div>
         </div>
       ) : (
-        <p></p>
+        <div className="weather-animation"></div>
       )}
     </div>
   );
