@@ -60,35 +60,41 @@ const Weather = () => {
           <img src={searchIcon} alt="" />
         </span>
       </div>
-      {weatherData ? (
-        <div>
-          <div className="current-weather">
-            {currentDate}
-            <h1>
-              {weatherData.data[0].temp}
-              <sup>°C</sup>
-            </h1>
-            {weatherData.city_name},{weatherData.country_code}
-          </div>
-          <div className="weather-info">
-            {weatherData.data.slice(0, 7).map((data, index) => (
-              <div key={index}>
-                <div>
-                  {new Date(data.valid_date).toLocaleDateString("en-US", {
-                    weekday: "long",
-                  })}
-                </div>
-                <span>
-                  {data.temp}
+      <div>
+        {weatherData ? (
+          weatherData.country_code === country ? (
+            <div>
+              <div className="current-weather">
+                {currentDate}
+                <h1>
+                  {weatherData.data[0].temp}
                   <sup>°C</sup>
-                </span>
+                </h1>
+                {weatherData.city_name}, {weatherData.country_code}
               </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div></div>
-      )}
+              <div className="weather-info">
+                {weatherData.data.slice(0, 7).map((data, index) => (
+                  <div key={index}>
+                    <div>
+                      {new Date(data.valid_date).toLocaleDateString("en-US", {
+                        weekday: "long",
+                      })}
+                    </div>
+                    <span>
+                      {data.temp}
+                      <sup>°C</sup>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <h3 style={{ color: "red" }}>Country code does not match</h3>
+          )
+        ) : (
+          <div></div>
+        )}
+      </div>
     </div>
   );
 };
