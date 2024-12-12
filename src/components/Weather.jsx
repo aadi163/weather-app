@@ -8,7 +8,7 @@ import axios from "axios";
 
 const Weather = () => {
   const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState("IN");
   const [weatherData, setWeatherData] = useState(null);
   let date = new DateObject();
   let currentDate = date.format("dddd DD MMMM");
@@ -16,12 +16,14 @@ const Weather = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `https://api.weatherbit.io/v2.0/forecast/daily?key=80d66ddb69604aab9719f91319545632&city=${city}&country=${country}`
+        `http://localhost:3000/fetch_data?&city=${city}&country=${country}"`
       );
+
       setWeatherData(response.data);
-      console.log(response.data);
+      console.log(response, country, city);
     } catch (error) {
       console.error(error);
+      console.log("error");
     }
   };
 
@@ -36,7 +38,6 @@ const Weather = () => {
     e.preventDefault();
     fetchData();
   };
-
   return (
     <div className="container">
       <div className="form">
@@ -44,10 +45,7 @@ const Weather = () => {
         <form>
           <select onChange={countryInputChange} defaultValue={"IN"}>
             {Countries.map((data) => (
-              <option value={data.isoCode}>
-                <img src={data.flag} alt="image" />
-                {data.isoCode}
-              </option>
+              <option value={data.isoCode}>{data.isoCode}</option>
             ))}
           </select>
           <input
@@ -89,7 +87,7 @@ const Weather = () => {
           </div>
         </div>
       ) : (
-        <div className="weather-animation"></div>
+        <div></div>
       )}
     </div>
   );
