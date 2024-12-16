@@ -1,27 +1,29 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import "./Weather.css";
 import weatherLogo from "../assets/weather.png";
+import searchIcon from "../assets/search-icon.png";
 import DateObject from "react-date-object";
+import Countries from "../assets/Countries.json";
 import axios from "axios";
 
 const Weather = () => {
   const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState("IN");
   const [weatherData, setWeatherData] = useState(null);
-  // const [sevenDayData, setsevenDayData] = useState([]);
-  const bgColor = useRef();
   let date = new DateObject();
   let currentDate = date.format("dddd DD MMMM");
 
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `https://api.weatherbit.io/v2.0/forecast/daily?key=80d66ddb69604aab9719f91319545632&city=${city}&country=${country}`
+        `http://localhost:3000/fetch_data?&city=${city}&country=${country}"`
       );
+
       setWeatherData(response.data);
-      console.log(response.data);
+      console.log(response, country, city);
     } catch (error) {
       console.error(error);
+      console.log("error");
     }
   };
 
@@ -32,16 +34,20 @@ const Weather = () => {
     setCountry(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const searchData = (e) => {
     e.preventDefault();
     fetchData();
   };
-
   return (
-    <div className="container" ref={bgColor}>
+    <div className="container">
       <div className="form">
         <img src={weatherLogo} alt="" />
-        <form onSubmit={handleSubmit}>
+        <form>
+          <select onChange={countryInputChange} defaultValue={"IN"}>
+            {Countries.map((data) => (
+              <option value={data.isoCode}>{data.isoCode}</option>
+            ))}
+          </select>
           <input
             type="text"
             placeholder="please enter your location "
@@ -49,47 +55,46 @@ const Weather = () => {
             onChange={cityInputChange}
             className="input-field"
           />
-          <input
-            type="text"
-            placeholder="Enter country"
-            value={country}
-            onChange={countryInputChange}
-            className="input-field"
-          />
-          <button type="submit" className="button">
-            search
-          </button>
         </form>
+        <span onClick={searchData} className="button">
+          <img src={searchIcon} alt="" />
+        </span>
       </div>
-      {weatherData ? (
-        <div>
-          <div className="current-weather">
-            {currentDate}
-            <h1>
-              {weatherData.data[0].temp}
-              <sup>°C</sup>
-            </h1>
-            {weatherData.city_name},{weatherData.country_code}
-          </div>
-          <div className="weather-info">
-            {weatherData.data.slice(0, 7).map((data, index) => (
-              <div key={index}>
-                <div>
-                  {new Date(data.valid_date).toLocaleDateString("en-US", {
-                    weekday: "long",
-                  })}
-                </div>
-                <span>
-                  {data.temp}
+      <div>
+        {weatherData ? (
+          weatherData.country_code === country ? (
+            <div>
+              <div className="current-weather">
+                {currentDate}
+                <h1>
+                  {weatherData.data[0].temp}
                   <sup>°C</sup>
-                </span>
+                </h1>
+                {weatherData.city_name}, {weatherData.country_code}
               </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <p></p>
-      )}
+              <div className="weather-info">
+                {weatherData.data.slice(0, 7).map((data, index) => (
+                  <div key={index}>
+                    <div>
+                      {new Date(data.valid_date).toLocaleDateString("en-US", {
+                        weekday: "long",
+                      })}
+                    </div>
+                    <span>
+                      {data.temp}
+                      <sup>°C</sup>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <h3 style={{ color: "red" }}>Country code does not match</h3>
+          )
+        ) : (
+          <div></div>
+        )}
+      </div>
     </div>
   );
 };
